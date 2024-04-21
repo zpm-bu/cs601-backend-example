@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 
-const POST = {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-};
-
 function InputSection() {
   const [name, setName] = useState("");
   const [greeting, setGreeting] = useState("");
 
   function handleClick() {
     fetch("http://localhost:5001/example/hello", {
-      ...POST,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
     })
       .then((response) => response.json())
@@ -33,6 +29,22 @@ function InputSection() {
   );
 }
 
+function DatabaseTest() {
+  const [fruits, setFruits] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5001/fruits")
+      .then(result => result.json())
+      .then(json => setFruits(json))
+  }, []);
+
+  return (
+    <ol>
+      {fruits.map(fruit => <li>{fruit.fruit_name}</li>)}
+    </ol>
+  );
+}
+
 function App() {
   const [firstElem, setFirstElem] = useState();
   const [secondElem, setSecondElem] = useState();
@@ -44,7 +56,7 @@ function App() {
         setFirstElem(json.firstElem);
         setSecondElem(json.secondElem);
       })
-      .catch((_error) => {});
+      .catch((_error) => { });
   }, []);
 
   return (
@@ -57,6 +69,8 @@ function App() {
       </ul>
       <h2>POST example:</h2>
       <InputSection />
+      <h2>Database query example:</h2>
+      <DatabaseTest />
     </>
   );
 }
